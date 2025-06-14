@@ -5,28 +5,23 @@ import seaborn as sns
 import os
 
 if __name__ == "__main__":
-    # 创建images文件夹（如果不存在）
     images_dir = "images"
     if not os.path.exists(images_dir):
         os.makedirs(images_dir)
         print(f"Created directory: {images_dir}")
     
-    # 读取所有数据，不仅仅是酒精事故
     df = pd.read_csv("data/monatszahlen2505_verkehrsunfaelle_06_06_25.csv")
     
-    # 只保留 'insgesamt' (总计) 类型，但包含所有事故类别
     df = df[df['AUSPRAEGUNG'] == 'insgesamt']
     
     print("Unique accident types:", df['MONATSZAHL'].unique())
     
-    # 数据预处理
     df['month'] = df['MONAT'].astype(str).str[-2:]
     valid_months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
     df = df[df['month'].isin(valid_months)]
     
     df['date'] = pd.to_datetime(df['JAHR'].astype(str) + '-' + df['month'], format='%Y-%m')
     
-    # 过滤掉 'Summe' 行
     df = df[df['MONATSZAHL'] != 'Summe']
     
     print(f"Data shape: {df.shape}")
@@ -34,7 +29,6 @@ if __name__ == "__main__":
     for i, accident_type in enumerate(df['MONATSZAHL'].unique()):
         print(f"{i+1}. {accident_type}")
     
-    # 1. 所有事故类型的时间序列图
     plt.figure(figsize=(15, 10))
     accident_types = df['MONATSZAHL'].unique()
     
@@ -53,7 +47,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(images_dir, 'all_accidents_timeseries.png'), dpi=300, bbox_inches='tight')
     plt.show()
     
-    # 2. 每种事故类型的子图
     n_types = len(accident_types)
     cols = 3
     rows = (n_types + cols - 1) // cols
@@ -73,7 +66,6 @@ if __name__ == "__main__":
             axes[i].grid(True, alpha=0.3)
             axes[i].tick_params(axis='x', rotation=45)
     
-    # 隐藏多余的子图
     for i in range(n_types, len(axes)):
         axes[i].set_visible(False)
     
@@ -81,13 +73,11 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(images_dir, 'accidents_by_type_subplots.png'), dpi=300, bbox_inches='tight')
     plt.show()
     
-    # 3. 年度总计对比（柱状图）
     yearly_data = df.groupby(['JAHR', 'MONATSZAHL'])['WERT'].sum().reset_index()
     
     plt.figure(figsize=(15, 8))
     years = sorted(yearly_data['JAHR'].unique())
     
-    # 为每种事故类型创建柱状图
     x = np.arange(len(years))
     width = 0.8 / len(accident_types)
     
