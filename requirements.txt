@@ -2,3 +2,7 @@ numpy
 pandas
 matplotlib
 prophet
+fastapi
+pydantic
+uvicorn
+joblib
