@@ -3,7 +3,7 @@ import numpy as np
 
 
 if __name__ == "__main__":
-    df = pd.read_csv("data/monatszahlen2505_verkehrsunfaelle_06_06_25.csv")
+    df = pd.read_csv("monatszahlen2505_verkehrsunfaelle_06_06_25.csv")
     df = df[(df['MONATSZAHL']=='Alkoholunfälle') 
         & (df['AUSPRAEGUNG']=='insgesamt')]
     
